@@ -102,9 +102,9 @@ SLA deadlines are auto-calculated from creation time based on priority:
 
 ### Backend → Render
 * **Root Directory**: `backend`
-* **Build Command**: `npm install`
-* **Start Command**: `npm start`
-* **Environment Variables**: Add `MONGO_URI` with your connection string.
+* **Build Command**: `yarn install`
+* **Start Command**: `yarn start`
+* **Environment Variables**: Add `MONGO_URI` variable under Environment settings in the Render dashboard and set its value to your MongoDB Atlas cloud database connection string. Do not use localhost URLs in production.
 
 ### Frontend → Vercel
 * **Root Directory**: `frontend`
