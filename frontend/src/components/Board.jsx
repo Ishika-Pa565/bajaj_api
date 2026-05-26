@@ -2,6 +2,7 @@ import React from 'react';
 import TicketCard from './TicketCard';
 
 const Board = ({ tickets, onUpdateStatus, onEditClick }) => {
+  const ticketList = Array.isArray(tickets) ? tickets : [];
   const statuses = [
     { id: 'Open', title: 'Open / Backlog', class: 'column-open' },
     { id: 'In Progress', title: 'In Progress', class: 'column-progress' },
@@ -30,7 +31,7 @@ const Board = ({ tickets, onUpdateStatus, onEditClick }) => {
   return (
     <div className="kanban-board">
       {statuses.map((status) => {
-        const columnTickets = tickets.filter(t => t.status === status.id);
+        const columnTickets = ticketList.filter(t => t.status === status.id);
         
         return (
           <div 

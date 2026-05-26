@@ -6,7 +6,7 @@ import Metrics from './components/Metrics';
 import TicketModal from './components/TicketModal';
 
 // Setup dynamic API Base URL
-const API_URL = import.meta.env.VITE_API_URL || '';
+const API_URL = import.meta.env.VITE_API_URL || 'https://bajaj-api-3-ae2u.onrender.com';
 
 const App = () => {
   const [tickets, setTickets] = useState([]);
@@ -20,7 +20,7 @@ const App = () => {
 
   // Initialize socket connection
   useEffect(() => {
-    const socketInstance = io(API_URL || window.location.origin, {
+    const socketInstance = io(API_URL, {
       transports: ['websocket', 'polling']
     });
 
@@ -29,17 +29,17 @@ const App = () => {
     });
 
     socketInstance.on('ticket_created', (newTicket) => {
-      setTickets((prev) => [newTicket, ...prev]);
+      setTickets((prev) => Array.isArray(prev) ? [newTicket, ...prev] : [newTicket]);
     });
 
     socketInstance.on('ticket_updated', (updatedTicket) => {
       setTickets((prev) => 
-        prev.map((t) => (t._id === updatedTicket._id ? updatedTicket : t))
+        Array.isArray(prev) ? prev.map((t) => (t._id === updatedTicket._id ? updatedTicket : t)) : [updatedTicket]
       );
     });
 
     socketInstance.on('ticket_deleted', (deletedId) => {
-      setTickets((prev) => prev.filter((t) => t._id !== deletedId));
+      setTickets((prev) => Array.isArray(prev) ? prev.filter((t) => t._id !== deletedId) : []);
     });
 
     setSocket(socketInstance);
@@ -68,9 +68,15 @@ const App = () => {
       }
       
       const response = await axios.get(url);
-      setTickets(response.data);
+      if (Array.isArray(response.data)) {
+        setTickets(response.data);
+      } else {
+        console.error('API response is not an array:', response.data);
+        setTickets([]);
+      }
     } catch (error) {
       console.error('Error fetching tickets:', error);
+      setTickets([]);
     }
   };
 
@@ -123,7 +129,8 @@ const App = () => {
   };
 
   // Filter tickets client-side for real-time search
-  const filteredTickets = tickets.filter(ticket => {
+  const ticketList = Array.isArray(tickets) ? tickets : [];
+  const filteredTickets = ticketList.filter(ticket => {
     const searchLower = searchQuery.toLowerCase();
     const matchesSearch = 
       ticket.title.toLowerCase().includes(searchLower) ||

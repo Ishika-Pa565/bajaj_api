@@ -1,10 +1,11 @@
 import React from 'react';
 
 const Metrics = ({ tickets }) => {
-  const activeTickets = tickets.filter(t => t.status !== 'Closed').length;
-  const inProgress = tickets.filter(t => t.status === 'In Progress').length;
-  const closed = tickets.filter(t => t.status === 'Closed').length;
-  const breached = tickets.filter(t => t.slaBreached && t.status !== 'Closed').length;
+  const ticketList = Array.isArray(tickets) ? tickets : [];
+  const activeTickets = ticketList.filter(t => t.status !== 'Closed').length;
+  const inProgress = ticketList.filter(t => t.status === 'In Progress').length;
+  const closed = ticketList.filter(t => t.status === 'Closed').length;
+  const breached = ticketList.filter(t => t.slaBreached && t.status !== 'Closed').length;
 
   return (
     <div className="metrics-grid">
